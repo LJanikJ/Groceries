@@ -1,0 +1,129 @@
+class Consumer {
+  float money;
+  int hunger;
+  int food;
+  
+  //CONSTRUCTOR
+  Consumer(float m, int h, int f) {
+    this.money = m;
+    this.hunger = h;
+    this.food = f;
+  }
+  
+  void buyFood() {
+    
+  }
+  
+  void eatFood() {
+    
+  }
+  
+  void work() {
+    
+  }
+  
+  void complain() {
+    
+  }
+  
+  void praise() {
+    
+  }
+}
+
+class Food {
+  String name;
+  String type;
+  String qual;
+  String location;
+  int quant;
+  //All food is sold in $1 increments
+  
+  //CONSTRUCTOR
+  Food(String n, String t, String ql, String l, int qnt) {
+    this.name = n;
+    this.type = t;
+    this.qual = ql;
+    this.quant = qnt;
+    this.location = l;
+  }
+  
+  void expire() {
+    
+  }
+  
+  void bought() {
+    //this.location = 
+  }
+}  
+
+class Store {
+  String name;
+  int supply;
+  String type;
+  int status;
+  int quality;
+  //float priceDiff;
+  
+  //CONSTRUCTOR
+  Store(String n, String t, int s) {
+    this.name = n;
+    this.supply = s;
+    this.type = t;
+    //this.priceDiff = pD;
+    
+    this.quality = int(random(2,5));
+    this.status  = int(random(2,5));
+  }
+  
+  void restock() {
+    this.supply++;
+  }
+  
+  void sellFood() {
+    this.supply--;
+  }
+  
+  void advertise() {
+    this.raiseStatus();
+    println("Buy objects, things, and even stuff at " + this.name + "!");
+  }
+  
+  void robbery() {
+    int robb = int(random(this.supply));
+    this.supply -= robb;
+    this.status--;
+    
+    println(this.name + " got robbed for $" + robb + " worth of food!");
+  }
+  
+  void bankrupt() {
+    //Put things here
+    println(this.name + "has gone bankrupt");
+  }
+  
+  void expandStore() {
+    this.quality += 3;
+    println(this.name + " has expanded!");
+  }
+  
+  //void raisePrices() {
+  //  this.priceDiff += 0.05;
+  //  println("Prices raised at " + this.name + "!");
+  //  lowerStatus();
+  //}
+  
+  //void lowerPrices() {
+  //  this.priceDiff -= 0.05;
+  //  println("Prices lowered at " + this.name + "!");
+  //  raiseStatus();
+  //}
+  
+  void raiseStatus() {
+    this.status++;
+  }
+  
+  void lowerStatus() {
+    this.status--;
+  }
+}
