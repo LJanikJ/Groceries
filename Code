@@ -1,61 +1,136 @@
-class Consumer {
-  float money;
-  int hunger;
-  int food;
+void setup() {
+  ArrayList<Store> stores = new ArrayList<Store>();
+  ArrayList<Consumer> customers = new ArrayList<Consumer>();
+  Store s1,s2,s3;
+  Consumer c1,c2,c3,c4,c5;
+  s1 = new Store("Zahr's", "fish", 5);
+  s2 = new Store("F00D 3553N714L5", "children", 3);
+  s3 = new Store("Pickesput", "potatos", 1);
   
-  //CONSTRUCTOR
-  Consumer(float m, int h, int f) {
-    this.money = m;
-    this.hunger = h;
-    this.food = f;
-  }
+  c1 = new Consumer("David",30,2,s1);
+  c2 = new Consumer("Luke",00,0,s2);
+  c3 = new Consumer("Jason",90,6,s3);
+  c4 = new Consumer("Michelle",30,0,s1);
+  c5 = new Consumer("Gail", 40, 1, s1);
   
-  void buyFood() {
+  customers.add(c1);
+  customers.add(c2);
+  customers.add(c3);
+  customers.add(c4);
+  customers.add(c5);
+  
+  stores.add(s1);
+  stores.add(s2);
+  stores.add(s3);
+  
+  while (true) {
+    for (int i = 0; i < stores.size(); i++) {
+      stores.get(i).checkStore();
+      delay(500);
+    }
+    println("");
     
-  }
-  
-  void eatFood() {
-    
-  }
-  
-  void work() {
-    
-  }
-  
-  void complain() {
-    
-  }
-  
-  void praise() {
+    for (int i = 0; i < customers.size(); i++) {
+      customers.get(i).checkStatus();
+      delay(500);
+    }
+    println("");
     
   }
 }
 
-class Food {
+class Consumer {
   String name;
-  String type;
-  String qual;
-  String location;
-  int quant;
-  //All food is sold in $1 increments
+  int money;
+  int hunger;
+  int food;
+  Store favStore;
   
   //CONSTRUCTOR
-  Food(String n, String t, String ql, String l, int qnt) {
+  Consumer(String n, int m, int f, Store j) {
     this.name = n;
-    this.type = t;
-    this.qual = ql;
-    this.quant = qnt;
-    this.location = l;
+    this.money = m;
+    this.hunger = 3;
+    this.food = f;
+    this.favStore = j;
   }
   
-  void expire() {
+  void checkStatus() {
+    if (this.favStore.bankrupt == false) {
+    
+      if (this.food == 0 && this.money >= 10)
+        this.buyFood();
+        
+      else if (this.food == 0)
+        this.work();
+        
+      else {
+        if (this.hunger <= 1)
+        this.eatFood();
+      
+        else if (this.money >= 80)
+          this.buyFood();
+        
+        else
+          this.work();
+      }
+    }
+    
+    else {
+      println(this.name + " is sad that their favourite store is closed");
+    }
+  }
+  
+  void buyFood() {
+    this.food++;
+    
+    favStore.sellFood();
+    
+    println(this.name + " bought some " + this.favStore.type + " from " + this.favStore.name + ".");
+    
+    int rand = int(random(3));
+    if (rand <= 1)
+      favStore.status--;
+      
+    else if (rand >= 2)
+      favStore.status++;
     
   }
   
-  void bought() {
-    //this.location = 
+  void eatFood() {
+    this.hunger += 2;
+    this.food--;
+    println(this.name + " just ate some food, now they have " + this.food + " left.");
   }
-}  
+  
+  void work() {
+    this.money += 20;
+    println(this.name + " went to work and now has $" + this.money + ".");
+  }
+}
+
+//class Food {
+//  String type;
+//  Store location;
+//  int timeLeft;
+//  //All food is sold in $10 increments
+  
+//  //CONSTRUCTOR
+//  Food(String t, Store l) {
+//    this.type = t;
+//    this.location = l;
+//    this.timeLeft = 5;
+    
+//    location.stock.add(this);
+//  }
+  
+//  void expire() {
+//    this.timeLeft--;
+//    if (timeLeft == 0) {
+//      location.sellFood();
+//    }
+//  }
+//}  
 
 class Store {
   String name;
@@ -63,21 +138,56 @@ class Store {
   String type;
   int status;
   int quality;
-  //float priceDiff;
+  boolean bankrupt;
   
   //CONSTRUCTOR
   Store(String n, String t, int s) {
     this.name = n;
     this.supply = s;
     this.type = t;
-    //this.priceDiff = pD;
+    this.bankrupt = false;
     
-    this.quality = int(random(2,5));
-    this.status  = int(random(2,5));
+    this.quality = int(random(4,6));
+    this.status  = int(random(4,6));
+  }
+  
+  void checkStore() {
+    if (this.bankrupt == false) {
+      if (this.supply >= 1) {
+        if (this.quality > 3) {
+          if (this.status > 10)
+            expandStore();
+          
+          else if (this.status > 3 && this.supply < 5)
+            restock();
+            
+          else if (this.status > 3) {
+            int rand = int(random(4));
+            if (rand == 0)
+              this.robbery();
+              
+            else
+              this.restock();
+          }
+          
+          else
+            this.advertise();
+        }
+        
+        else if (this.supply > 5);
+            
+        else
+          this.bankrupt();
+      }
+      
+      else 
+        this.bankrupt();
+    }
   }
   
   void restock() {
     this.supply++;
+    println(this.name + " has $" + this.supply + "0 worth of food.");
   }
   
   void sellFood() {
@@ -85,45 +195,28 @@ class Store {
   }
   
   void advertise() {
-    this.raiseStatus();
+    this.status += 3;
     println("Buy objects, things, and even stuff at " + this.name + "!");
   }
   
   void robbery() {
-    int robb = int(random(this.supply));
+    int robb = int(random(1,this.supply));
     this.supply -= robb;
-    this.status--;
+    this.status -= 3;
     
-    println(this.name + " got robbed for $" + robb + " worth of food!");
+    println(this.name + " got robbed for $" + robb + "0 worth of food!");
+    println("Now they only have $" + this.supply + "0 left!");
   }
   
   void bankrupt() {
-    //Put things here
-    println(this.name + "has gone bankrupt");
+    println(this.name + " has gone bankrupt");
+    this.bankrupt = true;
   }
   
   void expandStore() {
     this.quality += 3;
+    this.status -= 5;
+    this.supply++;
     println(this.name + " has expanded!");
-  }
-  
-  //void raisePrices() {
-  //  this.priceDiff += 0.05;
-  //  println("Prices raised at " + this.name + "!");
-  //  lowerStatus();
-  //}
-  
-  //void lowerPrices() {
-  //  this.priceDiff -= 0.05;
-  //  println("Prices lowered at " + this.name + "!");
-  //  raiseStatus();
-  //}
-  
-  void raiseStatus() {
-    this.status++;
-  }
-  
-  void lowerStatus() {
-    this.status--;
   }
 }
